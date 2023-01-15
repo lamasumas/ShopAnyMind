@@ -16,8 +16,6 @@
 
 package io.grpc.shop
 
-import com.nfeld.jsonpathkt.JsonPath
-import com.nfeld.jsonpathkt.extension.read
 import io.grpc.ManagedChannel
 import io.grpc.ManagedChannelBuilder
 import io.grpc.StatusException
@@ -34,24 +32,27 @@ class ShopClient(val channel: ManagedChannel) : Closeable {
 
     fun getPoints(jsonString: String) = runBlocking {
 
-        val request = pointsRequest {
-            datetime = JsonPath.parse(jsonString)?.read<String>("$.datetime").toString()
-            priceModifier = JsonPath.parse(jsonString)?.read<Double>("$.priceModifier")!!
-            price = JsonPath.parse(jsonString)?.read<Double>("$.price")!!
-            paymentMethod = JsonPath.parse(jsonString)?.read<String>("$.paymentMethod").toString()
-        }
         try {
+            val request = pointsRequest {
+                datetime = JsonManager.getJsonStringData(jsonString, "$.datetime")
+                priceModifier = JsonManager.getJsonDoubleData(jsonString, "$.priceModifier")
+                price = JsonManager.getJsonDoubleData(jsonString, "$.price")
+                paymentMethod = JsonManager.getJsonStringData(jsonString, "$.paymentMethod")
+            }
+
             val response = stub.getPoints(request)
             val jsonResponse = createReplyJson(response)
             println(jsonResponse)
         } catch (e: StatusException) {
-            println("RPC failed: ${e.status}")
+            println()
+            println("{ \n error: ${e.message} \n}")
         }
     }
 
+
     private fun createReplyJson(response: PointsReply): String {
         return "{\n" +
-                "\"\"finalPrice\":\": \"${response.finalPrice}\",\n" +
+                "\"finalPrice\": \"${response.finalPrice}\",\n" +
                 "\"points\": ${response.points},\n}"
     }
 
