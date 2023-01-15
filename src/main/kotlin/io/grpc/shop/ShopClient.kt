@@ -36,15 +36,23 @@ class ShopClient(val channel: ManagedChannel) : Closeable {
 
         val request = pointsRequest {
             datetime = JsonPath.parse(jsonString)?.read<String>("$.datetime").toString()
-            priceModifier= JsonPath.parse(jsonString)?.read<Double>("$.priceModifier")!!
-            price= JsonPath.parse(jsonString)?.read<String>("$.price").toString()
-            paymentMethod = JsonPath.parse(jsonString)?.read<String>("$.paymentMethod").toString()  }
+            priceModifier = JsonPath.parse(jsonString)?.read<Double>("$.priceModifier")!!
+            price = JsonPath.parse(jsonString)?.read<Double>("$.price")!!
+            paymentMethod = JsonPath.parse(jsonString)?.read<String>("$.paymentMethod").toString()
+        }
         try {
             val response = stub.getPoints(request)
-            println("Greeter client received: ${response.points}")
+            val jsonResponse = createReplyJson(response)
+            println(jsonResponse)
         } catch (e: StatusException) {
             println("RPC failed: ${e.status}")
         }
+    }
+
+    private fun createReplyJson(response: PointsReply): String {
+        return "{\n" +
+                "\"\"finalPrice\":\": \"${response.finalPrice}\",\n" +
+                "\"points\": ${response.points},\n}"
     }
 
     override fun close() {

@@ -12,7 +12,7 @@ service Shop {
 
 // The request message containing the user's name.
 message PointsRequest {
-  string price = 1;
+  double price = 1;
   double priceModifier = 2;
   string paymentMethod = 3;
   string datetime = 4;
