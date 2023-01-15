@@ -1,4 +1,3 @@
-
 package io.grpc.shop
 
 import io.grpc.Server
@@ -30,7 +29,7 @@ class ShopServer(val port: Int) {
         server.awaitTermination()
     }
 
-    private class GetPointsService : ShopGrpcKt.ShopCoroutineImplBase(){
+    private class GetPointsService : ShopGrpcKt.ShopCoroutineImplBase() {
         override suspend fun getPoints(request: PointsRequest): PointsReply {
             //calculate points and reply
             return Calculator.calculate(request)
