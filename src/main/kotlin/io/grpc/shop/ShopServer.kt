@@ -7,6 +7,7 @@ class ShopServer(val port: Int) {
     val server: Server = ServerBuilder
         .forPort(port)
         .addService(GetPointsService())
+        .addService(GetSalesService())
         .build()
 
     fun start() {
@@ -33,6 +34,12 @@ class ShopServer(val port: Int) {
         override suspend fun getPoints(request: PointsRequest): PointsReply {
             //calculate points and reply
             return Calculator.calculate(request)
+        }
+    }
+    private class GetSalesService : ShopGrpcKt.ShopCoroutineImplBase() {
+        override suspend fun getSales(request: SalesRequest): SalesReply {
+            DatabaseManager().getData(request)
+            return salesReply {  }
         }
     }
 }

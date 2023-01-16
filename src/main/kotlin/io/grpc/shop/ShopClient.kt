@@ -41,7 +41,7 @@ class ShopClient(val channel: ManagedChannel) : Closeable {
             }
 
             val response = stub.getPoints(request)
-            val jsonResponse = createReplyJson(response)
+            val jsonResponse = createGetPointsReplyJson(response)
             println(jsonResponse)
         } catch (e: StatusException) {
             println()
@@ -50,10 +50,34 @@ class ShopClient(val channel: ManagedChannel) : Closeable {
     }
 
 
-    private fun createReplyJson(response: PointsReply): String {
+    fun getSales(jsonString: String) = runBlocking {
+        try{
+            val request = salesRequest {
+                startDateTime = JsonManager.getJsonStringData(jsonString, "$.startDateTime")
+                endDateTime = JsonManager.getJsonStringData(jsonString, "$.endDateTime")
+            }
+            val response = stub.getSales(request)
+            val jsonResponse = createGetSalesReplyJson(response)
+            println()
+            println(jsonResponse)
+        }catch (e: StatusException) {
+            println()
+            println("{ \n error: ${e.message} \n}")
+        }
+    }
+
+
+    private fun createGetPointsReplyJson(response: PointsReply): String {
         return "{\n" +
                 "\"finalPrice\": \"${response.finalPrice}\",\n" +
                 "\"points\": ${response.points},\n}"
+    }
+
+    private fun createGetSalesReplyJson(response: SalesReply): String {
+        var jsonReply = "{\n" +
+                "\"sales\": [  \n"
+        jsonReply += "]\n}"
+        return jsonReply
     }
 
     override fun close() {
@@ -77,12 +101,17 @@ fun main(args: Array<String>) {
         ShopClient(
             builder.executor(dispatcher.asExecutor()).build()
         ).use {
+           // val testClientRequest = args.singleOrNull() ?: ("{\n" +
+            //         "\"price\": \"100.00\",\n" +
+            //         "\"priceModifier\": 0.95,\n" +
+            //       "\"paymentMethod\": \"MASTERCARD\",\n" +
+            //      "\"datetime\": \"2022-09-01T00:00:00Z\"}")
+            // it.getPoints(testClientRequest)
+
             val testClientRequest = args.singleOrNull() ?: ("{\n" +
-                    "\"price\": \"100.00\",\n" +
-                    "\"priceModifier\": 0.95,\n" +
-                    "\"paymentMethod\": \"MASTERCARD\",\n" +
-                    "\"datetime\": \"2022-09-01T00:00:00Z\"}")
-            it.getPoints(testClientRequest)
+                             "\"startDateTime\" : \"2022-10-02T10:09:00Z\",\n" +
+                             "\"endDateTime\": \"2022-10-02T10:15:01Z\"}" )
+            it.getSales(testClientRequest)
         }
     }
 }

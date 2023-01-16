@@ -1,4 +1,3 @@
-
 syntax = "proto3";
 
 package io.grpc.shop;
@@ -8,6 +7,7 @@ option java_multiple_files = true;
 // The greeting service definition.
 service Shop {
   rpc GetPoints(PointsRequest) returns (PointsReply){}
+  rpc GetSales(SalesRequest) returns (SalesReply){}
 }
 
 // The request message containing the user's name.
@@ -22,4 +22,20 @@ message PointsRequest {
 message PointsReply {
   string finalPrice = 1;
   int32 points = 2;
+}
+
+
+message SalesRequest {
+  string startDateTime = 1;
+  string endDateTime = 2;
+}
+
+// The response message containing the greetings
+message SalesReply {
+  repeated sale listOfSales = 1;
+}
+message sale{
+  string datetime = 1;
+  string sales = 2;
+  int32 points = 3;
 }
