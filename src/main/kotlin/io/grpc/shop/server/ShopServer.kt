@@ -8,8 +8,7 @@ import io.grpc.shop.server.dao.SalesDAO
 class ShopServer(val port: Int) {
     val server: Server = ServerBuilder
         .forPort(port)
-        .addService(GetPointsService())
-        .addService(GetSalesService())
+        .addService(ShopService())
         .build()
 
     fun start() {
@@ -32,14 +31,12 @@ class ShopServer(val port: Int) {
         server.awaitTermination()
     }
 
-    private class GetPointsService : ShopGrpcKt.ShopCoroutineImplBase() {
+    private class ShopService : ShopGrpcKt.ShopCoroutineImplBase() {
         override suspend fun getPoints(request: PointsRequest): PointsReply {
             //calculate points and reply
             return Calculator.calculate(request)
         }
-    }
 
-    private class GetSalesService : ShopGrpcKt.ShopCoroutineImplBase() {
         override suspend fun getSales(request: SalesRequest): SalesReply {
             val salesList = SalesDAO().getSalesBetweenDates(request.startDateTime, request.endDateTime)
             return SalesReply.newBuilder()

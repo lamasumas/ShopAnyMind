@@ -92,16 +92,16 @@ fun main(args: Array<String>) {
         ShopClient(
             builder.executor(dispatcher.asExecutor()).build()
         ).use {
-            // val testClientRequest = args.singleOrNull() ?: ("{\n" +
-            //         "\"price\": \"100.00\",\n" +
-            //         "\"priceModifier\": 0.95,\n" +
-            //       "\"paymentMethod\": \"MASTERCARD\",\n" +
-            //      "\"datetime\": \"2022-09-01T00:00:00Z\"}")
-            // it.getPoints(testClientRequest)
+            var testClientRequest = "{\n" +
+                    "\"price\": \"100.00\",\n" +
+                    "\"priceModifier\": 0.95,\n" +
+                    "\"paymentMethod\": \"MASTERCARD\",\n" +
+                    "\"datetime\": \"2022-09-01T00:00:00Z\"}"
+            it.getPoints(testClientRequest)
 
-            val testClientRequest = args.singleOrNull() ?: ("{\n" +
+            testClientRequest = "{\n" +
                     "\"startDateTime\" : \"2022-10-02T10:09:00Z\",\n" +
-                    "\"endDateTime\": \"2022-10-02T10:15:01Z\"}")
+                    "\"endDateTime\": \"2022-10-02T10:15:01Z\"}"
             it.getSales(testClientRequest)
         }
     }
