@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-package io.grpc.shop
+package io.grpc.shop.client
 
 import io.grpc.ManagedChannel
 import io.grpc.ManagedChannelBuilder
 import io.grpc.StatusException
 import io.grpc.shop.ShopGrpcKt.ShopCoroutineStub
+import io.grpc.shop.client.JsonManager.createGetPointsReplyJson
+import io.grpc.shop.client.JsonManager.createGetSalesReplyJson
+import io.grpc.shop.pointsRequest
+import io.grpc.shop.salesRequest
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.runBlocking
@@ -51,7 +55,7 @@ class ShopClient(val channel: ManagedChannel) : Closeable {
 
 
     fun getSales(jsonString: String) = runBlocking {
-        try{
+        try {
             val request = salesRequest {
                 startDateTime = JsonManager.getJsonStringData(jsonString, "$.startDateTime")
                 endDateTime = JsonManager.getJsonStringData(jsonString, "$.endDateTime")
@@ -60,25 +64,12 @@ class ShopClient(val channel: ManagedChannel) : Closeable {
             val jsonResponse = createGetSalesReplyJson(response)
             println()
             println(jsonResponse)
-        }catch (e: StatusException) {
+        } catch (e: StatusException) {
             println()
             println("{ \n error: ${e.message} \n}")
         }
     }
 
-
-    private fun createGetPointsReplyJson(response: PointsReply): String {
-        return "{\n" +
-                "\"finalPrice\": \"${response.finalPrice}\",\n" +
-                "\"points\": ${response.points},\n}"
-    }
-
-    private fun createGetSalesReplyJson(response: SalesReply): String {
-        var jsonReply = "{\n" +
-                "\"sales\": [  \n"
-        jsonReply += "]\n}"
-        return jsonReply
-    }
 
     override fun close() {
         channel.shutdown().awaitTermination(5, TimeUnit.SECONDS)
@@ -101,7 +92,7 @@ fun main(args: Array<String>) {
         ShopClient(
             builder.executor(dispatcher.asExecutor()).build()
         ).use {
-           // val testClientRequest = args.singleOrNull() ?: ("{\n" +
+            // val testClientRequest = args.singleOrNull() ?: ("{\n" +
             //         "\"price\": \"100.00\",\n" +
             //         "\"priceModifier\": 0.95,\n" +
             //       "\"paymentMethod\": \"MASTERCARD\",\n" +
@@ -109,8 +100,8 @@ fun main(args: Array<String>) {
             // it.getPoints(testClientRequest)
 
             val testClientRequest = args.singleOrNull() ?: ("{\n" +
-                             "\"startDateTime\" : \"2022-10-02T10:09:00Z\",\n" +
-                             "\"endDateTime\": \"2022-10-02T10:15:01Z\"}" )
+                    "\"startDateTime\" : \"2022-10-02T10:09:00Z\",\n" +
+                    "\"endDateTime\": \"2022-10-02T10:15:01Z\"}")
             it.getSales(testClientRequest)
         }
     }

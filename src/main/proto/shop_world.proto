@@ -32,9 +32,9 @@ message SalesRequest {
 
 // The response message containing the greetings
 message SalesReply {
-  repeated sale listOfSales = 1;
+  repeated Sale listOfSales = 1;
 }
-message sale{
+message Sale{
   string datetime = 1;
   string sales = 2;
   int32 points = 3;

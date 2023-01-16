@@ -1,8 +1,11 @@
-package io.grpc.shop
+package io.grpc.shop.server
 
 import com.google.rpc.Code
 import com.google.rpc.Status
 import io.grpc.protobuf.StatusProto
+import io.grpc.shop.PointsReply
+import io.grpc.shop.PointsRequest
+import io.grpc.shop.pointsReply
 
 object Calculator {
     //The example is wrong, as it is using MASTERCARD, it should be 0.03
@@ -16,7 +19,7 @@ object Calculator {
             "JCB" -> return calculate(pointsRequest, 0.95, 1.0, 0.05)
         }
         val errorStatus = Status.newBuilder()
-            .setCode(Code.FAILED_PRECONDITION_VALUE)
+            .setCode(Code.OUT_OF_RANGE_VALUE)
             .setMessage("The payment method is not a valid one")
             .build()
         throw StatusProto.toStatusException(errorStatus)
@@ -35,7 +38,7 @@ object Calculator {
             }
         } else {
             val errorStatus = Status.newBuilder()
-                .setCode(Code.FAILED_PRECONDITION_VALUE)
+                .setCode(Code.OUT_OF_RANGE_VALUE)
                 .setMessage("The price modifier is not in the correct range. Check the documentation")
                 .build()
             throw StatusProto.toStatusException(errorStatus)

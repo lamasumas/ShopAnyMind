@@ -1,4 +1,4 @@
-package io.grpc.shop
+package io.grpc.shop.client
 
 import com.google.rpc.Code
 import com.google.rpc.Status
@@ -6,6 +6,8 @@ import com.nfeld.jsonpathkt.JsonPath
 import com.nfeld.jsonpathkt.extension.read
 import io.grpc.StatusException
 import io.grpc.protobuf.StatusProto
+import io.grpc.shop.PointsReply
+import io.grpc.shop.SalesReply
 
 object JsonManager {
 
@@ -26,6 +28,27 @@ object JsonManager {
             throw throwStatusException(jsonParam)
         }
     }
+
+    fun createGetPointsReplyJson(response: PointsReply): String {
+        return "{\n" +
+                "\"finalPrice\": \"${response.finalPrice}\",\n" +
+                "\"points\": ${response.points},\n}"
+    }
+
+    fun createGetSalesReplyJson(response: SalesReply): String {
+        var jsonReply = "{\n" +
+                "\t\t\"sales\": [  \n"
+        response.listOfSalesList.forEach {
+            jsonReply += "\t\t\t{\n" +
+                    "\t\t\t\t\"datetime\": \"${it.datetime}\",\n" +
+                    "\t\t\t\t\"sales\": \"${it.sales}\",\n" +
+                    "\t\t\t\t\"points\": ${it.points},\n" +
+                    "\t\t\t}"
+        }
+        jsonReply += "]\n}"
+        return jsonReply
+    }
+
 
     private fun throwStatusException(jsonParam: String): StatusException {
         val errorStatus = Status.newBuilder()

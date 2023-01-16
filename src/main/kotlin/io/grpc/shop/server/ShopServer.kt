@@ -1,7 +1,9 @@
-package io.grpc.shop
+package io.grpc.shop.server
 
 import io.grpc.Server
 import io.grpc.ServerBuilder
+import io.grpc.shop.*
+import io.grpc.shop.server.dao.SalesDAO
 
 class ShopServer(val port: Int) {
     val server: Server = ServerBuilder
@@ -36,10 +38,12 @@ class ShopServer(val port: Int) {
             return Calculator.calculate(request)
         }
     }
+
     private class GetSalesService : ShopGrpcKt.ShopCoroutineImplBase() {
         override suspend fun getSales(request: SalesRequest): SalesReply {
-            DatabaseManager().getData(request)
-            return salesReply {  }
+            val salesList = SalesDAO().getSalesBetweenDates(request.startDateTime, request.endDateTime)
+            return SalesReply.newBuilder()
+                .addAllListOfSales(salesList).build()
         }
     }
 }
