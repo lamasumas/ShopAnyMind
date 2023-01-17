@@ -94,9 +94,14 @@ fun main(args: Array<String>) {
             builder.executor(dispatcher.asExecutor()).build()
         ).use {
             //Calls the getPoints remote procedure
+            println("EXECUTING GETPOINTS PROCEDURE")
             var testClientRequest = File("PointsExample.json").readText(Charsets.UTF_8)
+            println("Response received by the Server:")
             it.getPoints(testClientRequest)
             //Calls the getSales remote procedure
+            println("=================================")
+            println("EXECUTING GETSALES PROCEDURE")
+            println("Response received by the Server:")
             testClientRequest = File("SalesExmple.json").readText(Charsets.UTF_8)
             it.getSales(testClientRequest)
         }
