@@ -1,1 +1,1 @@
-psql -U postgres -f setup.sql
+psql -U postgres postgres -f setup.sql
