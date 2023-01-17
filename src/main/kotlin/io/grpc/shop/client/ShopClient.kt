@@ -94,10 +94,10 @@ fun main(args: Array<String>) {
             builder.executor(dispatcher.asExecutor()).build()
         ).use {
             //Calls the getPoints remote procedure
-            var testClientRequest = File("src/main/kotlin/io/grpc/shop/PointsExample.json").readText(Charsets.UTF_8)
+            var testClientRequest = File("PointsExample.json").readText(Charsets.UTF_8)
             it.getPoints(testClientRequest)
             //Calls the getSales remote procedure
-            testClientRequest = File("src/main/kotlin/io/grpc/shop/SalesExmple.json").readText(Charsets.UTF_8)
+            testClientRequest = File("SalesExmple.json").readText(Charsets.UTF_8)
             it.getSales(testClientRequest)
         }
     }
