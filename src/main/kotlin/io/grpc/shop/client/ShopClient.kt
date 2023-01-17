@@ -28,6 +28,7 @@ import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.runBlocking
 import java.io.Closeable
+import java.io.File
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
@@ -38,7 +39,7 @@ class ShopClient(val channel: ManagedChannel) : Closeable {
 
         try {
             val request = pointsRequest {
-                datetime = JsonManager.getJsonStringData(jsonString, "$.datetime")
+                datetime = JsonManager.getJsonTimeStampData(jsonString, "$.datetime")
                 priceModifier = JsonManager.getJsonDoubleData(jsonString, "$.priceModifier")
                 price = JsonManager.getJsonDoubleData(jsonString, "$.price")
                 paymentMethod = JsonManager.getJsonStringData(jsonString, "$.paymentMethod")
@@ -57,8 +58,8 @@ class ShopClient(val channel: ManagedChannel) : Closeable {
     fun getSales(jsonString: String) = runBlocking {
         try {
             val request = salesRequest {
-                startDateTime = JsonManager.getJsonStringData(jsonString, "$.startDateTime")
-                endDateTime = JsonManager.getJsonStringData(jsonString, "$.endDateTime")
+                startDateTime = JsonManager.getJsonTimeStampData(jsonString, "$.startDateTime")
+                endDateTime = JsonManager.getJsonTimeStampData(jsonString, "$.endDateTime")
             }
             val response = stub.getSales(request)
             val jsonResponse = createGetSalesReplyJson(response)
@@ -92,16 +93,11 @@ fun main(args: Array<String>) {
         ShopClient(
             builder.executor(dispatcher.asExecutor()).build()
         ).use {
-            var testClientRequest = "{\n" +
-                    "\"price\": \"100.00\",\n" +
-                    "\"priceModifier\": 0.95,\n" +
-                    "\"paymentMethod\": \"MASTERCARD\",\n" +
-                    "\"datetime\": \"2022-09-01T00:00:00Z\"}"
+            //Calls the getPoints remote procedure
+            var testClientRequest = File("src/main/kotlin/io/grpc/shop/PointsExample.json").readText(Charsets.UTF_8)
             it.getPoints(testClientRequest)
-
-            testClientRequest = "{\n" +
-                    "\"startDateTime\" : \"2022-10-02T10:09:00Z\",\n" +
-                    "\"endDateTime\": \"2022-10-02T10:15:01Z\"}"
+            //Calls the getSales remote procedure
+            testClientRequest = File("src/main/kotlin/io/grpc/shop/SalesExmple.json").readText(Charsets.UTF_8)
             it.getSales(testClientRequest)
         }
     }

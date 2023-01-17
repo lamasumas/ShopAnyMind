@@ -20,6 +20,23 @@ object JsonManager {
         }
     }
 
+    fun getJsonTimeStampData(jsonString: String, jsonParam: String): String {
+        val stringTimestamp = getJsonStringData(jsonString, jsonParam)
+        val regex = Regex(
+            pattern = "[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?([zZ]|([\\+-])([01]\\d|2[0-3]):?([0-5]\\d)?)?",
+            options = setOf(RegexOption.IGNORE_CASE)
+        )
+        if (regex.matches(stringTimestamp)) {
+            return stringTimestamp
+        } else {
+            throw throwStatusException(
+                jsonParam,
+                "Timestamp is the wrong format, it should be like this 2022-09-01T00:00:00Z"
+            )
+        }
+    }
+
+
     fun getJsonDoubleData(jsonString: String, jsonParam: String): Double {
         val stringData = JsonPath.parse(jsonString)?.read<Double>(jsonParam)
         if (stringData != null) {
@@ -50,10 +67,13 @@ object JsonManager {
     }
 
 
-    private fun throwStatusException(jsonParam: String): StatusException {
+    private fun throwStatusException(
+        jsonParam: String,
+        message: String = "The parameter $jsonParam is missing or is not correct type in the request"
+    ): StatusException {
         val errorStatus = Status.newBuilder()
             .setCode(Code.FAILED_PRECONDITION_VALUE)
-            .setMessage("The parameter $jsonParam is not in the request")
+            .setMessage(message)
             .build()
         return StatusProto.toStatusException(errorStatus)
     }
