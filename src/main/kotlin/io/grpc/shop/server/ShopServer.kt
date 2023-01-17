@@ -32,11 +32,16 @@ class ShopServer(val port: Int) {
     }
 
     private class ShopService : ShopGrpcKt.ShopCoroutineImplBase() {
+        /**
+         * Remote procedure for getting the points and the final price
+         */
         override suspend fun getPoints(request: PointsRequest): PointsReply {
-            //calculate points and reply
             return Calculator.calculate(request)
         }
 
+        /**
+         * Remote procedure that gets all the sales between two timestamps and returns it as a list
+         */
         override suspend fun getSales(request: SalesRequest): SalesReply {
             val salesList = SalesDAO().getSalesBetweenDates(request.startDateTime, request.endDateTime)
             return SalesReply.newBuilder()
@@ -45,6 +50,9 @@ class ShopServer(val port: Int) {
     }
 }
 
+/**
+ * Main function that will launch the server
+ */
 fun main() {
     val port = System.getenv("PORT")?.toInt() ?: 50051
     val server = ShopServer(port)

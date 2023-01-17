@@ -9,9 +9,16 @@ import java.sql.DriverManager
 import java.sql.SQLException
 import java.text.SimpleDateFormat
 
+/**
+ * Class that works as a middle point between the main project code and the database
+ */
 class SalesDAO {
 
     private val jdbcUrl = "jdbc:postgresql://localhost:5432/shop"
+
+    /**
+     * Function that return all the sales between two timestamps
+     */
     fun getSalesBetweenDates(startDate: String, endDate: String): MutableList<Sale> {
         val resultList = mutableListOf<Sale>()
         try {

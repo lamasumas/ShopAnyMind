@@ -9,6 +9,9 @@ import io.grpc.shop.pointsReply
 
 object Calculator {
     //The example is wrong, as it is using MASTERCARD, it should be 0.03
+    /**
+     * Funciton that return the points and the final price depending on the payment type and two values.
+     */
     fun calculate(pointsRequest: PointsRequest): PointsReply {
         when (pointsRequest.paymentMethod) {
             "CASH" -> return calculate(pointsRequest, 0.9, 1.0, 0.05)

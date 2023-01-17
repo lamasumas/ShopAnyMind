@@ -11,6 +11,9 @@ import io.grpc.shop.SalesReply
 
 object JsonManager {
 
+    /**
+     * Function that will try to load a string value of a json stringify file
+     */
     fun getJsonStringData(jsonString: String, jsonParam: String): String {
         val stringData = JsonPath.parse(jsonString)?.read<String>(jsonParam)
         if (stringData != null) {
@@ -20,6 +23,9 @@ object JsonManager {
         }
     }
 
+    /**
+     * Function that will try to load a TimeStamp value of a json stringify file
+     */
     fun getJsonTimeStampData(jsonString: String, jsonParam: String): String {
         val stringTimestamp = getJsonStringData(jsonString, jsonParam)
         val regex = Regex(
@@ -37,6 +43,9 @@ object JsonManager {
     }
 
 
+    /**
+     * Function that will try to load a Double value of a json stringify file
+     */
     fun getJsonDoubleData(jsonString: String, jsonParam: String): Double {
         val stringData = JsonPath.parse(jsonString)?.read<Double>(jsonParam)
         if (stringData != null) {
@@ -46,12 +55,18 @@ object JsonManager {
         }
     }
 
+    /**
+     * Function that creates a json based on the GetPoints response
+     */
     fun createGetPointsReplyJson(response: PointsReply): String {
         return "{\n" +
                 "\"finalPrice\": \"${response.finalPrice}\",\n" +
                 "\"points\": ${response.points},\n}"
     }
 
+    /**
+     * Function that create a json based on the GetSales response
+     */
     fun createGetSalesReplyJson(response: SalesReply): String {
         var jsonReply = "{\n" +
                 "\t\t\"sales\": [  \n"
@@ -66,7 +81,9 @@ object JsonManager {
         return jsonReply
     }
 
-
+    /**
+     * Function throws an error with a default message or a specific one
+     */
     private fun throwStatusException(
         jsonParam: String,
         message: String = "The parameter $jsonParam is missing or is not correct type in the request"

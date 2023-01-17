@@ -35,6 +35,10 @@ import java.util.concurrent.TimeUnit
 class ShopClient(val channel: ManagedChannel) : Closeable {
     private val stub: ShopCoroutineStub = ShopCoroutineStub(channel)
 
+
+    /**
+     * Method that will execute the GetPoints remote procedure.
+     */
     fun getPoints(jsonString: String) = runBlocking {
 
         try {
@@ -55,6 +59,9 @@ class ShopClient(val channel: ManagedChannel) : Closeable {
     }
 
 
+    /**
+     * Method that will execute the GetSales remote procedure.
+     */
     fun getSales(jsonString: String) = runBlocking {
         try {
             val request = salesRequest {
@@ -78,8 +85,7 @@ class ShopClient(val channel: ManagedChannel) : Closeable {
 }
 
 /**
- * Greeter, uses first argument as name to greet if present;
- * greets "world" otherwise.
+ * Main method of the shopclient that will execute both procedures
  */
 fun main(args: Array<String>) {
     val isRemote = args.size == 1
